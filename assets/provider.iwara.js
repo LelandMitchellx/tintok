@@ -1,7 +1,7 @@
 export const meta = {
   code: 'iwara.tv',
   base: 'iwara.tv',
-  name: 'Iwara',
+  name: 'Iwara 666',
   host: ['api.iwara.tv', 'iwara.tv'],
   word: ['R18', 'MMD'],
 }
