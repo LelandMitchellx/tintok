@@ -41,7 +41,7 @@ export const entryMeta = async () => [
 ]
 
 export const entryList = async ({ url }) => {
-  console.log('[iwara.tv] fetch list url from Dart Engine:', url)
+  console.log('[iwara.tv] fetch list url from Dart Engine: 66666666666', url)
 
   const data = await fetch(url).then(v => v.json()).catch(err => {
     console.log('[iwara.tv] fetch error:', err)
