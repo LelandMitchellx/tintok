@@ -37,7 +37,7 @@ export const routes = [
 export const entryMeta = async ({ url }) => {
   const genres = []
   for (const p of [1, 2, 3, 4, 5]) {
-    const { document } = await via(`${url}/cn/genres?page=${p}`, { pipe: ['cloudflare'] }).then(parseHTML)
+    const { document } = await dio(`${url}/cn/genres?page=${p}`, { pipe: ['cloudflare'] }).then(parseHTML)
     const links = [...document.querySelectorAll('a.text-nord13')]
       .map(v => v.getAttribute('href'))
       .filter(f => f && f.includes('genres'))
@@ -66,7 +66,7 @@ export const entryMeta = async ({ url }) => {
 
 export const entryList = async ({ url }) => {
   console.info('[MISSAV] fetch list url from Dart Engine:', url)
-  const html = await via(url, { pipe: ['cloudflare', 'cookies'] })
+  const html = await dio(url, { pipe: ['cloudflare', 'cookies'] })
   const { document } = parseHTML(html)
 
   return [...document.querySelectorAll('.thumbnail.group')].map(el => {
@@ -95,7 +95,7 @@ export const entryPost = async ({ url }) => {
 
   // Agent: 通过 onRequest 捕获包含 surrit.com / playlist.m3u8 媒体直链 喵🐾
   const videoSrc = await onRequest(url, ['playlist.m3u8', 'video.m3u8', 'surrit.com', '.m3u8']).catch(() => '')
-  const { document } = await via(url, { pipe: ['cloudflare', 'cookies'] }).then(parseHTML)
+  const { document } = await dio(url, { pipe: ['cloudflare', 'cookies'] }).then(parseHTML)
   const words = []
   const keyMap = {
     '女优': 'actresses',

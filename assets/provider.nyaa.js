@@ -24,33 +24,53 @@ export const routes = [
   }
 ]
 
-// Agent: 更新 Nyaa.si 常用分类列表 喵🐾
-export const entryMeta = async () => [
-  { mode: 'radio', name: '全部分类', code: 'c=0_0' },
-  { mode: 'radio', name: '动画 - 全部', code: 'c=1_0' },
-  { mode: 'radio', name: '动画 - AMV/MV', code: 'c=1_1' },
-  { mode: 'radio', name: '动画 - 英语熟肉', code: 'c=1_2' },
-  { mode: 'radio', name: '动画 - 非英语字幕', code: 'c=1_3' },
-  { mode: 'radio', name: '动画 - 生肉', code: 'c=1_4' },
-  { mode: 'radio', name: '音频 - 全部', code: 'c=2_0' },
-  { mode: 'radio', name: '音频 - 无损音乐', code: 'c=2_1' },
-  { mode: 'radio', name: '音频 - 有损音乐', code: 'c=2_2' },
-  { mode: 'radio', name: '书籍 - 全部', code: 'c=3_0' },
-  { mode: 'radio', name: '书籍 - 英语熟肉', code: 'c=3_1' },
-  { mode: 'radio', name: '书籍 - 非英语字幕', code: 'c=3_2' },
-  { mode: 'radio', name: '书籍 - 生肉', code: 'c=3_3' },
-  { mode: 'radio', name: '真人 - 全部', code: 'c=4_0' },
-  { mode: 'radio', name: '真人 - 英语熟肉', code: 'c=4_1' },
-  { mode: 'radio', name: '真人 - 偶像/PV', code: 'c=4_2' },
-  { mode: 'radio', name: '真人 - 非英语字幕', code: 'c=4_3' },
-  { mode: 'radio', name: '真人 - 生肉', code: 'c=4_4' },
-  { mode: 'radio', name: '图片 - 全部', code: 'c=5_0' },
-  { mode: 'radio', name: '图片 - 图案/画集', code: 'c=5_1' },
-  { mode: 'radio', name: '图片 - 照片', code: 'c=5_2' },
-  { mode: 'radio', name: '软件 - 全部', code: 'c=6_0' },
-  { mode: 'radio', name: '软件 - 应用', code: 'c=6_1' },
-  { mode: 'radio', name: '软件 - 游戏', code: 'c=6_2' },
-]
+// Agent: 根据是否为 sukebei 子域动态返回相匹配的 entryMeta 分类 喵🐾
+export const entryMeta = async (args = {}) => {
+  const isSukebei = (args?.base || '').includes('sukebei') ||
+    (args?.url || '').includes('sukebei');
+
+  if (isSukebei) {
+    return [
+      { mode: 'radio', name: 'All categories', code: 'c=0_0' },
+      { mode: 'radio', name: 'Art - 全部', code: 'c=1_0' },
+      { mode: 'radio', name: 'Art - Anime', code: 'c=1_1' },
+      { mode: 'radio', name: 'Art - Doujinshi', code: 'c=1_2' },
+      { mode: 'radio', name: 'Art - Games', code: 'c=1_3' },
+      { mode: 'radio', name: 'Art - Manga', code: 'c=1_4' },
+      { mode: 'radio', name: 'Art - Pictures', code: 'c=1_5' },
+      { mode: 'radio', name: 'Real Life - 全部', code: 'c=2_0' },
+      { mode: 'radio', name: 'Real Life - Pictures', code: 'c=2_1' },
+      { mode: 'radio', name: 'Real Life - Videos', code: 'c=2_2' },
+    ]
+  }
+
+  return [
+    { mode: 'radio', name: '全部分类', code: 'c=0_0' },
+    { mode: 'radio', name: '动画 - 全部', code: 'c=1_0' },
+    { mode: 'radio', name: '动画 - AMV/MV', code: 'c=1_1' },
+    { mode: 'radio', name: '动画 - 英语熟肉', code: 'c=1_2' },
+    { mode: 'radio', name: '动画 - 非英语字幕', code: 'c=1_3' },
+    { mode: 'radio', name: '动画 - 生肉', code: 'c=1_4' },
+    { mode: 'radio', name: '音频 - 全部', code: 'c=2_0' },
+    { mode: 'radio', name: '音频 - 无损音乐', code: 'c=2_1' },
+    { mode: 'radio', name: '音频 - 有损音乐', code: 'c=2_2' },
+    { mode: 'radio', name: '书籍 - 全部', code: 'c=3_0' },
+    { mode: 'radio', name: '书籍 - 英语熟肉', code: 'c=3_1' },
+    { mode: 'radio', name: '书籍 - 非英语字幕', code: 'c=3_2' },
+    { mode: 'radio', name: '书籍 - 生肉', code: 'c=3_3' },
+    { mode: 'radio', name: '真人 - 全部', code: 'c=4_0' },
+    { mode: 'radio', name: '真人 - 英语熟肉', code: 'c=4_1' },
+    { mode: 'radio', name: '真人 - 偶像/PV', code: 'c=4_2' },
+    { mode: 'radio', name: '真人 - 非英语字幕', code: 'c=4_3' },
+    { mode: 'radio', name: '真人 - 生肉', code: 'c=4_4' },
+    { mode: 'radio', name: '图片 - 全部', code: 'c=5_0' },
+    { mode: 'radio', name: '图片 - 图案/画集', code: 'c=5_1' },
+    { mode: 'radio', name: '图片 - 照片', code: 'c=5_2' },
+    { mode: 'radio', name: '软件 - 全部', code: 'c=6_0' },
+    { mode: 'radio', name: '软件 - 应用', code: 'c=6_1' },
+    { mode: 'radio', name: '软件 - 游戏', code: 'c=6_2' },
+  ]
+}
 
 export const entryList = async ({ url }) => {
   console.info('[Nyaa] fetch list url from Dart Engine:', url)

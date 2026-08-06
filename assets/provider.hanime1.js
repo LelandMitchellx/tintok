@@ -24,7 +24,7 @@ export const routes = [
 
 export const entryMeta = async ({ url }) => {
   console.info(`[Hanime1] fetch meta url from Dart Engine: ${url}`)
-  const { document } = await via(url, { pipe: ['cloudflare'] }).then(parseHTML)
+  const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const result = []
 
   const genreItems = [...document.querySelectorAll('.simple-dropdown-item.genre-option')]
@@ -86,7 +86,7 @@ export const entryMeta = async ({ url }) => {
 
 export const entryList = async ({ url }) => {
   console.info('[Hanime1] fetch list url from Dart Engine:', url)
-  const html = await via(url, { pipe: ['cloudflare'] })
+  const html = await dio(url, { pipe: ['cloudflare'] })
   if (!html) return []
   const { document } = parseHTML(html)
 
@@ -127,7 +127,7 @@ export const entryPost = async ({ url }) => {
   console.info('[Hanime1] fetch post detail url from Dart Engine:', url)
   if (!url) return { card: [] }
 
-  const html = await via(url, { pipe: ['cloudflare'] })
+  const html = await dio(url, { pipe: ['cloudflare'] })
   if (!html) return { card: [] }
 
   const { document } = parseHTML(html)

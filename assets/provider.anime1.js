@@ -29,7 +29,7 @@ export const entryList = async ({ url, page: rawPage, word }) => {
   console.info('[Anime1] fetch list url from Dart Engine:', url)
   const page = Number(rawPage) || 1
   const pageSize = 20
-  const html = await via(url, { pipe: ['cloudflare'] })
+  const html = await dio(url, { pipe: ['cloudflare'] })
   let json = JSON.parse(html) || []
 
   if (word) {
@@ -52,7 +52,7 @@ export const entryList = async ({ url, page: rawPage, word }) => {
 export const entryPost = async ({ url }) => {
   console.info('[Anime1] fetch detail url from Dart Engine:', url)
   if (!url) return { card: [] }
-  const html = await via(url, { pipe: ['cloudflare'] })
+  const html = await dio(url, { pipe: ['cloudflare'] })
   const { document } = parseHTML(html)
   const articles = [...document.querySelectorAll('article.post')]
   return Promise.all(

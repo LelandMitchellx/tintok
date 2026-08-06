@@ -1,7 +1,7 @@
 export const meta = {
   code: 'iwara.tv',
   base: 'iwara.tv',
-  name: 'Iwara 666',
+  name: 'Iwara',
   host: ['api.iwara.tv', 'iwara.tv'],
   word: ['R18', 'MMD'],
 }
@@ -41,7 +41,7 @@ export const entryMeta = async () => [
 ]
 
 export const entryList = async ({ url }) => {
-  console.log('[iwara.tv] fetch list url from Dart Engine: 66666666666', url)
+  console.log('[iwara.tv] fetch list url from Dart Engine:', url)
 
   const data = await fetch(url).then(v => v.json()).catch(err => {
     console.log('[iwara.tv] fetch error:', err)
