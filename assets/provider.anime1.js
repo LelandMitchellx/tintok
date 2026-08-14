@@ -8,7 +8,6 @@ export const meta = {
   word: ['动漫'],
 }
 
-// Agent: 声明式数组路由规则 喵🐾
 export const routes = [
   {
     key: 'list',
@@ -25,22 +24,14 @@ export const entryMeta = async () => [
   { mode: 'radio', name: '最新', code: 'type=latest' }
 ]
 
-export const entryList = async ({ url, page: rawPage, word }) => {
+export const entryList = async ({ url, page = 1, word, size = 20 }) => {
   console.info('[Anime1] fetch list url from Dart Engine:', url)
-  const page = Number(rawPage) || 1
-  const pageSize = 20
-  const html = await dio(url, { pipe: ['cloudflare'] })
-  let json = JSON.parse(html) || []
-
-  if (word) {
-    const query = word.toLowerCase()
-    json = json.filter(([id, name]) => name.toLowerCase().includes(query))
-  }
-
-  return json
-    .slice((page - 1) * pageSize, page * pageSize)
+  const json = await fetch(url).then(v => v.json())
+  const list = word ? json.filter(([_, name]) => name.toLowerCase().includes(word.toLowerCase())) : json
+  return list
+    .slice((page - 1) * size, page * size)
     .map(([id, name]) => ({
-      code: hash(`${id}:${meta.code}`),
+      code: hash(`${meta.code}:${id}`),
       link: `https://${meta.base}/?cat=${id}`,
       cove: 'https://sta.anicdn.com/playerImg/8.jpg',
       name: name,
@@ -51,9 +42,7 @@ export const entryList = async ({ url, page: rawPage, word }) => {
 
 export const entryPost = async ({ url }) => {
   console.info('[Anime1] fetch detail url from Dart Engine:', url)
-  if (!url) return { card: [] }
-  const html = await dio(url, { pipe: ['cloudflare'] })
-  const { document } = parseHTML(html)
+  const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
   const articles = [...document.querySelectorAll('article.post')]
   return Promise.all(
     articles.map(async article => {

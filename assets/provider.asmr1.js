@@ -100,7 +100,7 @@ export const entryList = async (args) => {
   })
 
   return works.map(item => ({
-    code: hash(`${item.id}:${meta.code}`),
+    code: hash(`${meta.code}:${item.id}`),
     link: `https://${meta.base}/work/${item.id}`,
     mode: 'audio',
     name_more: item.name,
@@ -113,9 +113,7 @@ export const entryList = async (args) => {
 
 export const entryPost = async ({ url }) => {
   console.info('[ASMR1] fetch post detail url from Dart Engine:', url)
-  if (!url) return { card: [] }
-  const data = await fetch(url).then(v => v.json()).catch(() => [])
-
+  const data = await fetch(url).then(v => v.json())
   const extractTracks = items => {
     const cards = []
     const walk = (list, parentTitle = '') => {

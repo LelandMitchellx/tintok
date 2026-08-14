@@ -8,7 +8,6 @@ export const meta = {
   word: ['R18', '磁力'],
 }
 
-// Agent: 声明式数组路由规则 喵🐾
 export const routes = [
   {
     key: 'list',
@@ -24,11 +23,8 @@ export const routes = [
   }
 ]
 
-// Agent: 根据是否为 sukebei 子域动态返回相匹配的 entryMeta 分类 喵🐾
 export const entryMeta = async (args = {}) => {
-  const isSukebei = (args?.base || '').includes('sukebei') ||
-    (args?.url || '').includes('sukebei');
-
+  const isSukebei = (args?.base || '').includes('sukebei') || (args?.url || '').includes('sukebei');
   if (isSukebei) {
     return [
       { mode: 'radio', name: 'All categories', code: 'c=0_0' },
@@ -75,7 +71,6 @@ export const entryMeta = async (args = {}) => {
 export const entryList = async ({ url }) => {
   console.info('[Nyaa] fetch list url from Dart Engine:', url)
   const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
-
   const items = [
     ...document.querySelectorAll('.success'),
     ...document.querySelectorAll('.default'),
@@ -83,9 +78,8 @@ export const entryList = async ({ url }) => {
     const td = v.querySelectorAll('td')
     const magnet = new URL(td[2].querySelectorAll('a')[1]?.href)
     const name = td[1].querySelector('a')?.getAttribute('title') ?? ''
-    const xt = magnet?.searchParams.get('xt').split(':').at(-1)
     return {
-      code: hash(xt),
+      code: magnet.searchParams.get('xt').split(':').at(-1),
       name,
       link: td[2].querySelectorAll('a')[1]?.href,
       mode: 'magnet',

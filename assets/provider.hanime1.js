@@ -8,7 +8,6 @@ export const meta = {
   word: ['R18', '里番'],
 }
 
-// Agent: 声明式数组路由规则 喵🐾
 export const routes = [
   {
     key: 'list',
@@ -26,10 +25,8 @@ export const entryMeta = async ({ url }) => {
   console.info(`[Hanime1] fetch meta url from Dart Engine: ${url}`)
   const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const result = []
-
   const genreItems = [...document.querySelectorAll('.simple-dropdown-item.genre-option')]
   const genres = new Set()
-
   for (const item of genreItems) {
     const value = item.getAttribute('data-value')
     const name = item.querySelector('.hentai-sort-options')?.textContent?.trim() || value
@@ -86,19 +83,14 @@ export const entryMeta = async ({ url }) => {
 
 export const entryList = async ({ url }) => {
   console.info('[Hanime1] fetch list url from Dart Engine:', url)
-  const html = await dio(url, { pipe: ['cloudflare'] })
-  if (!html) return []
-  const { document } = parseHTML(html)
-
-  const getVid = (href) => (href ? (new URLSearchParams(href.split('?')[1] ?? '').get('v') || href) : '')
-
+  const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const rows = [...document.querySelectorAll('.home-rows-videos-wrapper a')]
     .filter(el => el.getAttribute('href')?.includes('watch'))
     .map(el => {
       const href = el.getAttribute('href')
       return {
         mode: 'video',
-        code: hash(`${getVid(href)}:${meta.code}`),
+        code: hash(`${meta.code}:${new URL(href).searchParams.get('v')}`),
         link: href,
         cove: el.querySelector('img')?.getAttribute('src'),
         name: el.querySelector('.home-rows-videos-title')?.textContent?.trim(),
@@ -111,7 +103,7 @@ export const entryList = async ({ url }) => {
       const href = el.querySelector('a')?.getAttribute('href')
       return {
         mode: 'video',
-        code: hash(`${getVid(href)}:${meta.code}`),
+        code: hash(`${meta.code}:${new URL(href).searchParams.get('v')}`),
         link: href,
         name_more: el.querySelector('.subtitle')?.textContent?.trim()?.split(' ')[0],
         cove: el.querySelector('img')?.getAttribute('src'),
@@ -125,20 +117,12 @@ export const entryList = async ({ url }) => {
 
 export const entryPost = async ({ url }) => {
   console.info('[Hanime1] fetch post detail url from Dart Engine:', url)
-  if (!url) return { card: [] }
-
-  const html = await dio(url, { pipe: ['cloudflare'] })
-  if (!html) return { card: [] }
-
-  const { document } = parseHTML(html)
-
+  const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const sources = [...document.querySelectorAll('video#player source')]
     .map(v => ({ src: v.getAttribute('src') || v.src, size: parseInt(v.getAttribute('size') || '0', 10) }))
     .sort((a, b) => b.size - a.size)
-
   const videoSrc = sources.length > 0 ? sources[0].src : ''
   const authorName = document.querySelector('#video-artist-name')?.textContent?.trim() ?? ''
-
   return {
     cove_more: document.querySelector('#video-user-avatar + img')?.getAttribute('src') || '',
     name_more: authorName ? `${authorName}@word=${encodeURIComponent(authorName)}` : '',

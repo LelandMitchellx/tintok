@@ -91,8 +91,7 @@ export const entryMeta = async ({ url }) => {
 
 export const entryList = async ({ url }) => {
   console.info('[wnacg] fetch list url from Dart Engine:', url)
-  const html = await fetch(url).then(v => v.text())
-  const { document } = parseHTML(html)
+  const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
   return [...document.querySelectorAll('.pic_box a')]
     .filter(el => el.getAttribute('href')?.includes('/photos'))
     .map(el => {
@@ -103,7 +102,7 @@ export const entryList = async ({ url }) => {
       const fullCove = imgSrc ? new URL(imgSrc, url).href : ''
       return {
         mode: 'comic',
-        code: hash(`${aid}:${meta.code}`),
+        code: hash(`${meta.code}:${aid}`),
         link: fullLink,
         cove: fullCove,
         name: el.getAttribute('title') || el.querySelector('img')?.getAttribute('alt') || '',
@@ -114,35 +113,22 @@ export const entryList = async ({ url }) => {
 
 export const entryPost = async ({ url }) => {
   console.info('[wnacg] fetch detail url from Dart Engine:', url)
-  if (!url) return { card: [] }
-
   const html = await fetch(url).then(v => v.text()).catch(() => '')
   const { document } = parseHTML(html || '<html></html>')
-
   const metaInfo = [...document.querySelectorAll('.uwconn > label')]
     .map(el => (el.textContent || '').replace(/[：:]/g, '').replace('分類', '').replace('頁數', '').trim())
     .filter(Boolean)
-
   const tags = [...document.querySelectorAll('.addtags a.tagshow')].map(el => {
     const tagName = (el.textContent || '').trim()
     return `${tagName}@tag=${tagName}`
   })
-
-  // Agent: Wnacg 页面逻辑 — photos-index 替换为 photos-gallery 抓取全套画廊图片喵🐾
-  let gallery = []
   const galleryUrl = url.replace('photos-index', 'photos-gallery')
-  const galleryText = await fetch(galleryUrl).then(v => v.text()).catch(() => '')
-  if (galleryText) {
-    const regex = RegExp(String.raw`//[^\"]+/[^\"]+\.[^\"]+`, 'g')
-    const matches = Array.from(galleryText.matchAll(regex))
-    gallery = matches.map((e) => 'https:' + e[0].substring(0, e[0].length - 1))
-  }
-
+  const galleryText = await fetch(galleryUrl).then(v => v.text())
+  const regex = RegExp(String.raw`//[^\"]+/[^\"]+\.[^\"]+`, 'g')
+  const matches = Array.from(galleryText.matchAll(regex))
+  const gallery = matches.map((e) => 'https:' + e[0].substring(0, e[0].length - 1))
   return {
     word: [...metaInfo, ...tags],
-    card: gallery.length > 0 ? [{
-      name: '全一话',
-      data: gallery
-    }] : []
+    card: gallery.length > 0 ? [{ data: gallery }] : []
   }
 }
