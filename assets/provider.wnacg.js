@@ -113,8 +113,7 @@ export const entryList = async ({ url }) => {
 
 export const entryPost = async ({ url }) => {
   console.info('[wnacg] fetch detail url from Dart Engine:', url)
-  const html = await fetch(url).then(v => v.text()).catch(() => '')
-  const { document } = parseHTML(html || '<html></html>')
+  const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
   const metaInfo = [...document.querySelectorAll('.uwconn > label')]
     .map(el => (el.textContent || '').replace(/[：:]/g, '').replace('分類', '').replace('頁數', '').trim())
     .filter(Boolean)
