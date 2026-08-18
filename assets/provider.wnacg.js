@@ -4,7 +4,7 @@ export const meta = {
   code: 'wnacg.ru',
   base: 'wnacg.ru',
   name: '绅士漫画',
-  host: ['www.wn01.shop', 'www.wnacg.org', 'www.wnacg.ru'],
+  host: ['www.wnacg.com', 'wnacg.com', 'www.wn01.shop', 'www.wnacg.org', 'www.wnacg.ru'],
   word: ['R18', '本子', '漫画'],
 }
 

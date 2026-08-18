@@ -34,9 +34,10 @@ export const routes = [
 ]
 
 export const entryMeta = async ({ url }) => {
+  const origin = new URL(url).origin
   const genres = []
   for (const p of [1, 2, 3, 4, 5]) {
-    const { document } = await dio(`${url}/cn/genres?page=${p}`, { pipe: ['cloudflare'] }).then(parseHTML)
+    const { document } = await dio(`${origin}/cn/genres?page=${p}`, { pipe: ['cloudflare'] }).then(parseHTML)
     const links = [...document.querySelectorAll('a.text-nord13')]
       .map(v => v.getAttribute('href'))
       .filter(f => f && f.includes('genres'))

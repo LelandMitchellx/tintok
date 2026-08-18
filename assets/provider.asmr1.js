@@ -122,9 +122,10 @@ export const entryPost = async ({ url }) => {
           walk(item.children, item.title)
         } else if (item.type === 'audio' && item.mediaDownloadUrl) {
           cards.push({
-            data: [item.mediaDownloadUrl],
+            data: item.mediaDownloadUrl,
             name: parentTitle ? `${parentTitle} - ${item.title}` : item.title,
-            type: 'audio',
+            // Agent: 检索同级目录中的同名字幕文件 (.vtt / .lrc) 写入 track 喵🐾
+            track: list.find(s => s.title === item.title + '.vtt' || s.title === item.title + '.lrc' || s.title === item.title.replace(/\.[^/.]+$/, '.vtt') || s.title === item.title.replace(/\.[^/.]+$/, '.lrc'))?.mediaDownloadUrl || undefined
           })
         }
       }
