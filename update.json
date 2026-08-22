@@ -1,5 +1,5 @@
 {
-  "latestVersion": "2026.08.22+8",
+  "latestVersion": "2026.08.18+6",
   "forceUpdate": true,
   "updateUrl": "https://github.com/LelandMitchellx/zako/releases/tag/v2026.08.22-20260822-856e998",
   "releaseNotes": "fix: Refactor URL encoding in TemplateStrategy, remove unused import sheet widget, and implement new import route with enhanced JSON handling and UI improvements. Update tests for collect service and widget functionality.",
