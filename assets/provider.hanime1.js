@@ -115,7 +115,7 @@ export const entryList = async ({ code, url }) => {
   return [...rows, ...cols]
 }
 
-export const entryPost = async ({ url }) => {
+export const entryPost = async ({ url, cove, cover }) => {
   console.info('[Hanime1] fetch post detail url from Dart Engine:', url)
   const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const sources = [...document.querySelectorAll('video#player source')]
@@ -123,7 +123,12 @@ export const entryPost = async ({ url }) => {
     .sort((a, b) => b.size - a.size)
   const videoSrc = sources.length > 0 ? sources[0].src : ''
   const authorName = document.querySelector('#video-artist-name')?.textContent?.trim() ?? ''
+  const poster = document.querySelector('video#player, #player, video[poster]')?.getAttribute('poster') || document.querySelector('meta[property="og:image"]')?.getAttribute('content') || cove || cover || ''
+  const title = document.querySelector('#shareBtn-title, h3#shareBtn-title, .video-title, h4.video-title, h1')?.textContent?.trim() || document.querySelector('meta[property="og:title"]')?.getAttribute('content') || ''
+  console.info('[Hanime1] resolved poster cover:', poster, 'title:', title)
   return {
+    cove: poster,
+    name: title,
     cove_more: document.querySelector('#video-user-avatar + img')?.getAttribute('src') || '',
     name_more: authorName ? `${authorName}@word=${encodeURIComponent(authorName)}` : '',
     note: document.querySelector('.video-caption-text')?.textContent?.trim() || '',
