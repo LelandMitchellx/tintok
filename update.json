@@ -1,5 +1,5 @@
 {
-  "latestVersion": "2026.08.22+7",
+  "latestVersion": "2026.08.18+6",
   "forceUpdate": true,
   "updateUrl": "https://github.com/LelandMitchellx/zako/releases/tag/v2026.08.22-20260822-895fc62",
   "releaseNotes": "fix: 修复Windows编译，统一规范产物\nfeat: add string and icon extensions for enhanced UI components\nfeat: 增加磁力播放历史\nfeat: 重构设置页",
