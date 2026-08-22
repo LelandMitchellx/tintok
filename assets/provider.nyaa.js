@@ -23,9 +23,8 @@ export const routes = [
   }
 ]
 
-export const entryMeta = async (args = {}) => {
-  const isSukebei = (args?.base || '').includes('sukebei') || (args?.url || '').includes('sukebei');
-  if (isSukebei) {
+export const entryMeta = async ({ host }) => {
+  if (host.includes('sukebei')) {
     return [
       { mode: 'radio', name: 'All categories', code: 'c=0_0' },
       { mode: 'radio', name: 'Art - 全部', code: 'c=1_0' },
@@ -81,7 +80,7 @@ export const entryList = async ({ url }) => {
     return {
       code: magnet.searchParams.get('xt').split(':').at(-1),
       name,
-      link: td[2].querySelectorAll('a')[1]?.href,
+      link: td[1].querySelector('a')?.href,
       mode: 'magnet',
     }
   })

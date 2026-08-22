@@ -62,7 +62,7 @@ export const entryMeta = async ({ url }) => {
   ]
 }
 
-export const entryList = async ({ url }) => {
+export const entryList = async ({ code, url }) => {
   console.info('[MISSAV] fetch list url from Dart Engine:', url)
   const { document } = await dio(url, { pipe: ['cloudflare', 'cookies'] }).then(parseHTML)
   return [...document.querySelectorAll('.thumbnail.group')].map(el => {
@@ -75,11 +75,11 @@ export const entryList = async ({ url }) => {
     const name = el.querySelector('.truncate')?.textContent?.trim() || img?.getAttribute('alt') || ''
     return {
       mode: 'video',
-      code: hash(`${meta.code}:${postId}`),
+      code: hash(`${code}:${postId}`),
       link: cardLink,
       cove: cove.startsWith('http') ? cove : (cove ? new URL(cove, url).href : ''),
       name: name,
-      cardAction: scheme({ method: 'entryPost', link: cardLink })
+      cardAction: scheme({ method: 'entryPost', url: cardLink })
     }
   })
 }

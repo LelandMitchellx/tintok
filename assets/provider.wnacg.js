@@ -4,7 +4,7 @@ export const meta = {
   code: 'wnacg.ru',
   base: 'wnacg.ru',
   name: '绅士漫画',
-  host: ['www.wnacg.com', 'wnacg.com', 'www.wn01.shop', 'www.wnacg.org', 'www.wnacg.ru'],
+  host: ['wn09.shop', 'wnacg.com', 'wnacg.org', 'wnacg.ru'],
   word: ['R18', '本子', '漫画'],
 }
 
@@ -44,11 +44,9 @@ export const routes = [
   }
 ]
 
-export const entryMeta = async ({ url }) => {
+export const entryMeta = async ({ url, host }) => {
   const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
   const items = []
-  const currentHost = new URL(url).host
-
   items.push({ mode: 'radio', name: '最近更新', code: 'albums=index' })
   items.push({ mode: 'radio', name: '今日排行', code: 'albums=favorite_ranking&type=day' })
   items.push({ mode: 'radio', name: '本周排行', code: 'albums=favorite_ranking&type=week' })
@@ -63,7 +61,7 @@ export const entryMeta = async ({ url }) => {
 
     if (!name || name === '首頁' || name === '論壇' || name === '更新' || name === '排行') continue
     if (href.includes('wnbbs')) continue
-    if (href.startsWith('http') && !href.includes(currentHost)) continue
+    if (href.startsWith('http') && !href.includes(host)) continue
 
     items.push({ mode: 'line', name: name })
 
@@ -77,7 +75,7 @@ export const entryMeta = async ({ url }) => {
       const subName = sub.textContent?.trim()
       const subHref = sub.getAttribute('href') || ''
 
-      if (subHref.startsWith('http') && !subHref.includes(currentHost)) continue
+      if (subHref.startsWith('http') && !subHref.includes(host)) continue
 
       const subCate = subHref.match(/cate-(\d+)/)?.[1]
       if (subCate) {
@@ -89,7 +87,7 @@ export const entryMeta = async ({ url }) => {
   return items
 }
 
-export const entryList = async ({ url }) => {
+export const entryList = async ({ url, code }) => {
   console.info('[wnacg] fetch list url from Dart Engine:', url)
   const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
   return [...document.querySelectorAll('.pic_box a')]
@@ -102,7 +100,7 @@ export const entryList = async ({ url }) => {
       const fullCove = imgSrc ? new URL(imgSrc, url).href : ''
       return {
         mode: 'comic',
-        code: hash(`${meta.code}:${aid}`),
+        code: hash(`${code}:${aid}`),
         link: fullLink,
         cove: fullCove,
         name: el.getAttribute('title') || el.querySelector('img')?.getAttribute('alt') || '',
@@ -111,9 +109,9 @@ export const entryList = async ({ url }) => {
     })
 }
 
-export const entryPost = async ({ url }) => {
-  console.info('[wnacg] fetch detail url from Dart Engine:', url)
-  const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
+export const entryPost = async ({ link }) => {
+  console.info('[wnacg] fetch detail link from Dart Engine:', link)
+  const { document } = await fetch(link).then(v => v.text()).then(parseHTML)
   const metaInfo = [...document.querySelectorAll('.uwconn > label')]
     .map(el => (el.textContent || '').replace(/[：:]/g, '').replace('分類', '').replace('頁數', '').trim())
     .filter(Boolean)
@@ -121,7 +119,7 @@ export const entryPost = async ({ url }) => {
     const tagName = (el.textContent || '').trim()
     return `${tagName}@tag=${tagName}`
   })
-  const galleryUrl = url.replace('photos-index', 'photos-gallery')
+  const galleryUrl = link.replace('photos-index', 'photos-gallery')
   const galleryText = await fetch(galleryUrl).then(v => v.text())
   const regex = RegExp(String.raw`//[^\"]+/[^\"]+\.[^\"]+`, 'g')
   const matches = Array.from(galleryText.matchAll(regex))

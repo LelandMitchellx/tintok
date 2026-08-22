@@ -39,22 +39,22 @@ export const entryMeta = async () => [
   { mode: 'radio', name: '点赞', code: 'sort=likes' },
 ]
 
-export const entryList = async ({ url }) => {
+export const entryList = async ({ code, origin, url }) => {
   console.log('[iwara.tv] fetch list url from Dart Engine:', url)
   const data = await fetch(url).then(v => v.json())
   const list = Array.isArray(data?.results) ? data.results : (Array.isArray(data) ? data : [])
   return Promise.all(list
     .filter(f => f && f.file && !f.embedUrl && f.status == 'active')
     .map(async v => ({
-      code: hash(`${meta.code}:${v.id}`),
+      code: hash(`${code}:${v.id}`),
       cove: `https://i.iwara.tv/image/thumbnail/${v.file.id}/thumbnail-${String(v.thumbnail || 0).padStart(2, '0')}.jpg`,
       name: v.title || '',
       name_more: `${v.user?.name || ''}@user=${v.user?.id}`,
       cove_more: v.user?.avatar ? `https://i.iwara.tv/image/avatar/${v.user?.avatar?.id}/${v.user?.avatar?.name}` : 'https://www.iwara.tv/images/default-avatar.jpg',
       mode: 'video',
-      link: `https://${meta.base}/video/${v.id}`,
+      link: `${origin}/video/${v.id}`,
       word: (v.tags || []).map(t => `${t?.id}@tags=${t?.id}`),
-      cardAction: scheme({ method: 'entryPost', link: `https://${meta.base}/video/${v.id}`, id: v.id }),
+      cardAction: scheme({ method: 'entryPost', url: `${origin}/video/${v.id}` }),
     })))
 }
 

@@ -26,10 +26,9 @@ export const routes = [
   }
 ]
 
-export const entryMeta = async ({ url }) => {
+export const entryMeta = async ({ code, origin, url }) => {
   // Agent: 从 Dart 引擎传入的 URL 提取 origin，避免硬编码 API 域名 喵🐾
-  const base = new URL(url).origin
-  const tags = await fetch(`${base}/api/tags/`)
+  const tags = await fetch(`${origin}/api/tags/`)
     .then(r => r.json())
     .catch(() => [])
 
@@ -70,15 +69,14 @@ export const entryMeta = async ({ url }) => {
 }
 
 // Agent: 搜索接口特殊处理 — word/tag/tags 需拼接为 $tag:xxx$ 路径格式，无法通过声明式路由表达 喵🐾
-export const entryList = async (args) => {
-  const host = new URL(args.url)
-
+export const entryList = async ({ code, origin, url, tag, tags, word }) => {
+  const host = new URL(url)
   // Agent: 根据传入的参数构造 ASMR1 路径搜索格式（word 直接拼接，tag 转 $tag:xxx$ 语法）喵🐾
   let q = ''
-  if (args.word) q += args.word
-  if (args.tag) q += ` $tag:${args.tag}$`
-  if (args.tags) {
-    const tagsArr = Array.isArray(args.tags) ? args.tags : [args.tags]
+  if (word) q += word
+  if (tag) q += ` $tag:${tag}$`
+  if (tags) {
+    const tagsArr = Array.isArray(tags) ? tags : [tags]
     tagsArr.forEach(t => { if (t) q += ` $tag:${t}$` })
   }
 
@@ -100,14 +98,14 @@ export const entryList = async (args) => {
   })
 
   return works.map(item => ({
-    code: hash(`${meta.code}:${item.id}`),
-    link: `https://${meta.base}/work/${item.id}`,
+    code: hash(`${code}:${item.id}`),
+    link: `${origin}/work/${item.id}`,
     mode: 'audio',
     name_more: item.name,
     cove: item.mainCoverUrl,
     name: item.title,
     word: [`RJ${`${item.id}`.padStart(8, '0')}@word=RJ${`${item.id}`.padStart(8, '0')}`, ...(item.tags || []).map(t => `${t.name}@tag=${t.name}`)],
-    cardAction: scheme({ method: 'entryPost', link: `https://api.asmr-200.com/api/tracks/${item.id}`, id: item.id })
+    cardAction: scheme({ method: 'entryPost', link: `${origin}/api/tracks/${item.id}` })
   }))
 }
 

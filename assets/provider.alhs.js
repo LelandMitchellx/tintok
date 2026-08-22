@@ -48,10 +48,9 @@ export const entryMeta = async () => [
 ]
 
 // Agent: 小说列表解析器（精准对齐 ALHS 真实 DOM 结构：提取文章ID、标题、作者、字数、Tag slug 并补全随机二次元封面） 喵🐾
-export const entryList = async ({ url }) => {
+export const entryList = async ({ url, code }) => {
   console.info('[alhs] fetch list url from Dart Engine:', url)
   const { document } = await fetch(url).then(v => v.text()).then(parseHTML)
-
   const items = [...document.querySelectorAll('article')].map(el => {
     const titleEl = el.querySelector('a.post-title') || el.querySelector('.post-title a') || el.querySelector('.post-title')
     const href = titleEl?.getAttribute('href') || el.querySelector('a')?.getAttribute('href') || ''
@@ -79,8 +78,8 @@ export const entryList = async ({ url }) => {
     const cove = thumbImg ? (thumbImg.startsWith('http') ? thumbImg : new URL(thumbImg, url).href) : ''
 
     return {
+      code: hash(`${code}:${id}`),
       mode: 'novel',
-      code: hash(`${meta.code}:${id || fullLink}`),
       link: fullLink,
       name: title,
       name_more: author ? `${author}@word=${encodeURIComponent(author)}` : '',

@@ -24,19 +24,19 @@ export const entryMeta = async () => [
   { mode: 'radio', name: '最新', code: 'type=latest' }
 ]
 
-export const entryList = async ({ url, page = 1, word, size = 20 }) => {
+export const entryList = async ({ code, origin, url, page = 1, word, size = 20 }) => {
   console.info('[Anime1] fetch list url from Dart Engine:', url)
   const json = await fetch(url).then(v => v.json())
   const list = word ? json.filter(([_, name]) => name.toLowerCase().includes(word.toLowerCase())) : json
   return list
     .slice((page - 1) * size, page * size)
     .map(([id, name]) => ({
-      code: hash(`${meta.code}:${id}`),
-      link: `https://${meta.base}/?cat=${id}`,
+      code: hash(`${code}:${id}`),
+      link: `${origin}/?cat=${id}`,
       cove: 'https://sta.anicdn.com/playerImg/8.jpg',
       name: name,
       mode: 'video',
-      cardAction: scheme({ method: 'entryPost', link: `https://${meta.base}/?cat=${id}`, cat: id }),
+      cardAction: scheme({ method: 'entryPost', link: `${origin}/?cat=${id}` }),
     }))
 }
 

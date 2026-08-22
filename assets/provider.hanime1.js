@@ -81,7 +81,7 @@ export const entryMeta = async ({ url }) => {
   return result
 }
 
-export const entryList = async ({ url }) => {
+export const entryList = async ({ code, url }) => {
   console.info('[Hanime1] fetch list url from Dart Engine:', url)
   const { document } = await dio(url, { pipe: ['cloudflare'] }).then(parseHTML)
   const rows = [...document.querySelectorAll('.home-rows-videos-wrapper a')]
@@ -90,7 +90,7 @@ export const entryList = async ({ url }) => {
       const href = el.getAttribute('href')
       return {
         mode: 'video',
-        code: hash(`${meta.code}:${new URL(href).searchParams.get('v')}`),
+        code: hash(`${code}:${new URL(href).searchParams.get('v')}`),
         link: href,
         cove: el.querySelector('img')?.getAttribute('src'),
         name: el.querySelector('.home-rows-videos-title')?.textContent?.trim(),
@@ -103,7 +103,7 @@ export const entryList = async ({ url }) => {
       const href = el.querySelector('a')?.getAttribute('href')
       return {
         mode: 'video',
-        code: hash(`${meta.code}:${new URL(href).searchParams.get('v')}`),
+        code: hash(`${code}:${new URL(href).searchParams.get('v')}`),
         link: href,
         name_more: el.querySelector('.subtitle')?.textContent?.trim()?.split(' ')[0],
         cove: el.querySelector('img')?.getAttribute('src'),
